@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScrimX - Player Registration</title>
+     <link rel="icon" type="image/x-icon" href="scrimnobg.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a8a5e6;
+            --background: #f8f9fe;
+            --text-dark: #2d3436;
+            --text-light: #ffffff;
+            --transition: all 0.3s ease-in-out;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+            opacity: 0; /* Initially hide the body */
+            transition: opacity 2s ease-in-out;
+        }
+
+        /* Form Container */
+        .form-container {
+            background: var(--text-light);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            visibility: hidden; /* Hide the form initially */
+            opacity: 0;
+            transition: visibility 0s 2s, opacity 2s ease-in-out; /* Transition for fade-in effect */
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background: var(--primary-color);
+            color: var(--text-light);
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        button:hover {
+            background: var(--secondary-color);
+        }
+
+        .success-message {
+            color: green;
+            font-weight: 600;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: 600;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Registration Form -->
+    <div class="form-container">
+        <h2>Player Registration</h2>
+        <form id="playerForm">
+            <div class="form-group">
+                <label for="playerName">Instagram Username </label>
+                <input type="text" id="playerName" required>
+            </div>
+            <div class="form-group">
+                <label for="teamName">Team Name</label>
+                <input type="text" id="teamName" required>
+            </div>
+            <div class="form-group">
+                <label for="gameID">Free Fire UID</label>
+                <input type="text" id="gameID" required>
+            </div>
+            <button type="submit">Register</button>
+            <p class="success-message">Registration Successful!</p>
+            <p class="error-message">Please enter valid Instagram Username and Free Fire UID.</p>
+        </form>
+    </div>
+
+    <script>
+        // Fade in the body and form container when the page loads
+        window.onload = function() {
+            let formContainer = document.querySelector(".form-container");
+            formContainer.style.visibility = "visible";
+            formContainer.style.opacity = "1";
+            document.body.style.opacity = "1";
+        }
+
+        // Instagram username validation (simple pattern: no spaces, starts with a letter)
+        function isValidInstagramUsername(username) {
+            const pattern = /^[a-zA-Z][a-zA-Z0-9_]{5,29}$/; // Instagram username pattern
+            return pattern.test(username);
+        }
+
+        // Free Fire UID validation (numeric and valid range)
+        function isValidUID(uid) {
+            const pattern = /^\d{1,18}$/; // Only numbers, with up to 18 digits
+            return pattern.test(uid);
+        }
+
+        // Form submission logic
+        document.getElementById("playerForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let playerName = document.getElementById("playerName").value;
+            let teamName = document.getElementById("teamName").value;
+            let gameID = document.getElementById("gameID").value;
+
+            // Validate Instagram username and Free Fire UID
+            if (!isValidInstagramUsername(playerName) || !isValidUID(gameID)) {
+                document.querySelector(".error-message").style.display = "block";
+                return;
+            } else {
+                document.querySelector(".error-message").style.display = "none";
+            }
+
+            // Proceed with registration if inputs are valid
+            let playerData = {
+                name: playerName,
+                team: teamName,
+                gameID: gameID
+            };
+
+            let storedPlayers = JSON.parse(localStorage.getItem("players")) || [];
+            storedPlayers.push(playerData);
+            localStorage.setItem("players", JSON.stringify(storedPlayers));
+
+            document.querySelector(".success-message").style.display = "block";
+
+            setTimeout(() => {
+                document.querySelector(".success-message").style.display = "none";
+                document.getElementById("playerForm").reset();
+            }, 2000);
+        });
+    </script>
+
+</body>
+</html>
