@@ -3,187 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScrimX - Registration</title>
-     <link rel="icon" type="image/x-icon" href="scrimnobg.ico">
+    <title>Esports Tournament Registration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #6c5ce7;
-            --secondary-color: #a8a5e6;
-            --background: #f8f9fe;
-            --text-dark: #2d3436;
-            --text-light: #ffffff;
-            --transition: all 0.3s ease-in-out;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
         body {
-            background: var(--background);
-            color: var(--text-dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            position: relative;
-            opacity: 0; /* Initially hide the body */
-            transition: opacity 2s ease-in-out;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(-45deg, #e0f7fa, #b2ebf2, #80deea);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
+            color: #263238;
+            min-height: 100vh;
         }
 
-        /* Form Container */
-        .form-container {
-            background: var(--text-light);
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 450px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 131, 143, 0.1);
+            border: 1px solid #e0f7fa;
+            transition: opacity 0.3s ease;
+        }
+
+        h1 {
             text-align: center;
-            visibility: hidden; /* Hide the form initially */
-            opacity: 0;
-            transition: visibility 0s 2s, opacity 2s ease-in-out; /* Transition for fade-in effect */
-        }
-
-        h2 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
+            color: #006064;
+            margin-bottom: 25px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            font-size: 1.8rem;
         }
 
         .form-group {
             margin-bottom: 1rem;
-            text-align: left;
+            position: relative;
         }
 
         label {
-            font-weight: 600;
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 0.3rem;
+            color: #00796b;
+            font-weight: 500;
+            font-size: 0.9rem;
         }
 
-        input {
+        select, input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 0.6rem;
+            border: 1px solid #b2dfdb;
+            border-radius: 4px;
+            background: #fff;
+            color: #37474f;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
         }
 
-        button {
-            background: var(--primary-color);
-            color: var(--text-light);
-            padding: 10px 15px;
+        .instagram-input input {
+            padding-right: 30px;
+        }
+
+        .instagram-icon {
+            position: absolute;
+            right: 10px;
+            top: 55%;
+            transform: translateY(-50%);
+            color: #00897b;
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        #registerBtn {
+            background: #00bcd4;
+            color: white;
+            padding: 0.8rem 1.5rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
+            font-weight: 600;
             width: 100%;
-            font-weight: 600;
-            transition: var(--transition);
+            transition: background 0.3s;
+            font-size: 0.95rem;
         }
 
-        button:hover {
-            background: var(--secondary-color);
+        #registerBtn.success {
+            background: #4CAF50 !important;
         }
 
-        .success-message {
-            color: green;
-            font-weight: 600;
-            margin-top: 10px;
+        #registerBtn:hover {
+            background: #0097a7;
+        }
+
+        .help-btn {
+            background: #00bcd4;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 50%;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .admin-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #b2dfdb;
+            padding: 15px;
+            border-radius: 8px;
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            width: 300px;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 131, 143, 0.1);
+        }
+
+        .admin-panel.active {
+            opacity: 1;
+            max-height: 400px;
+        }
+
+        #viewRegistrationsBtn {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            background: #00bcd4;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        #registrationsList {
+            max-height: 350px;
+            overflow-y: auto;
             display: none;
         }
 
-        .error-message {
-            color: red;
-            font-weight: 600;
-            margin-top: 10px;
-            display: none;
+        .fade-out {
+            opacity: 0.3 !important;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Tournament Registration</h1>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label>Select Game</label>
+                <select id="gameSelect" required>
+                    <option value="">Choose Game</option>
+                    <option value="Free Fire">Free Fire</option>
+                    <option value="PUBG">PUBG</option>
+                    <option value="MLBB" disabled>MLBB (N/A)</option>
+                </select>
+            </div>
 
-    <!-- Registration Form -->
-    <div class="form-container">
-        <h2>Player Registration</h2>
-        <form id="playerForm">
             <div class="form-group">
-                <label for="playerName">Instagram Username </label>
-                <input type="text" id="playerName" required>
+                <label>Select Team Type</label>
+                <select id="teamType" required>
+                    <option value="">Choose Team Type</option>
+                    <option value="Solo">Solo</option>
+                    <option value="Duo">Duo</option>
+                    <option value="Squad">Squad</option>
+                </select>
             </div>
+
+            <div class="form-group instagram-input">
+                <label>Username</label>
+                <input type="text" id="username" required>
+                <i class="fab fa-instagram instagram-icon"></i>
+            </div>
+
+            <div class="form-group" id="teamNameGroup" style="display: none;">
+                <label>Team Name</label>
+                <input type="text" id="teamName">
+            </div>
+
             <div class="form-group">
-                <label for="teamName">Team Name</label>
-                <input type="text" id="teamName" required>
+                <label>UID</label>
+                <input type="number" id="uid" required>
             </div>
-            <div class="form-group">
-                <label for="gameID">Free Fire UID</label>
-                <input type="text" id="gameID" required>
-            </div>
-            <button type="submit">Register</button>
-            <p class="success-message">Registration Successful!</p>
-            <p class="error-message">Please enter valid Instagram Username and Free Fire UID.</p>
+
+            <button type="submit" id="registerBtn">Register Now</button>
         </form>
     </div>
 
-    <script>
-        // Fade in the body and form container when the page loads
-        window.onload = function() {
-            let formContainer = document.querySelector(".form-container");
-            formContainer.style.visibility = "visible";
-            formContainer.style.opacity = "1";
-            document.body.style.opacity = "1";
-        }
+    <button class="help-btn" onclick="toggleAdminPanel()">?</button>
+    <button id="viewRegistrationsBtn" onclick="toggleRegistrations()">Registered Players</button>
 
-        // Instagram username validation (simple pattern: no spaces, starts with a letter)
-        function isValidInstagramUsername(username) {
-            const pattern = /^[a-zA-Z][a-zA-Z0-9_]{5,29}$/; // Instagram username pattern
-            return pattern.test(username);
-        }
+    <div class="admin-panel">
+        <div id="adminLogin">
+            <input type="password" id="adminCode" placeholder="Enter admin code">
+            <button onclick="showRegistrations()">Submit</button>
+        </div>
+        <div id="registrationsList"></div>
+    </div>
 
-        // Free Fire UID validation (numeric and valid range)
-        function isValidUID(uid) {
-            const pattern = /^\d{1,18}$/; // Only numbers, with up to 18 digits
-            return pattern.test(uid);
-        }
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
 
-        // Form submission logic
-        document.getElementById("playerForm").addEventListener("submit", function(event) {
-            event.preventDefault();
+        const firebaseConfig = {
+            apiKey: "AIzaSyAfMGdHhkyqWI0YtTFejGd6uI7hM0LKncE",
+            authDomain: "pubgscrim-d9058.firebaseapp.com",
+            databaseURL: "https://pubgscrim-d9058-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "pubgscrim-d9058",
+            storageBucket: "pubgscrim-d9058.firebasestorage.app",
+            messagingSenderId: "344207896071",
+            appId: "1:344207896071:web:6cc10edac749d6a13144a2"
+        };
 
-            let playerName = document.getElementById("playerName").value;
-            let teamName = document.getElementById("teamName").value;
-            let gameID = document.getElementById("gameID").value;
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const registrationsRef = ref(database, 'registrations');
 
-            // Validate Instagram username and Free Fire UID
-            if (!isValidInstagramUsername(playerName) || !isValidUID(gameID)) {
-                document.querySelector(".error-message").style.display = "block";
-                return;
-            } else {
-                document.querySelector(".error-message").style.display = "none";
-            }
+        // Team name visibility toggle
+        document.getElementById('teamType').addEventListener('change', function() {
+            document.getElementById('teamNameGroup').style.display = 
+                ['Duo', 'Squad'].includes(this.value) ? 'block' : 'none';
+        });
 
-            // Proceed with registration if inputs are valid
-            let playerData = {
-                name: playerName,
-                team: teamName,
-                gameID: gameID
+        // Form submission handler
+        document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const registrationData = {
+                game: document.getElementById('gameSelect').value,
+                teamType: document.getElementById('teamType').value,
+                username: document.getElementById('username').value,
+                teamName: document.getElementById('teamName').value || 'N/A',
+                uid: document.getElementById('uid').value,
+                timestamp: new Date().toISOString()
             };
 
-            let storedPlayers = JSON.parse(localStorage.getItem("players")) || [];
-            storedPlayers.push(playerData);
-            localStorage.setItem("players", JSON.stringify(storedPlayers));
-
-            document.querySelector(".success-message").style.display = "block";
-
-            setTimeout(() => {
-                document.querySelector(".success-message").style.display = "none";
-                document.getElementById("playerForm").reset();
-            }, 2000);
+            try {
+                await push(registrationsRef, registrationData);
+                document.getElementById('registerBtn').classList.add('success');
+                setTimeout(() => {
+                    document.getElementById('registerBtn').classList.remove('success');
+                    document.getElementById('registrationForm').reset();
+                    document.getElementById('teamNameGroup').style.display = 'none';
+                }, 2000);
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Registration failed. Please try again.');
+            }
         });
-    </script>
 
+        // Admin panel functions
+        window.toggleAdminPanel = () => {
+            const panel = document.querySelector('.admin-panel');
+            panel.classList.toggle('active');
+            
+            if (!panel.classList.contains('active')) {
+                document.getElementById('adminLogin').style.display = 'block';
+                document.getElementById('registrationsList').style.display = 'none';
+                document.getElementById('adminCode').value = '';
+                document.getElementById('viewRegistrationsBtn').style.display = 'none';
+                document.querySelector('.container').classList.remove('fade-out');
+            }
+        };
+
+        window.showRegistrations = () => {
+            const adminCode = document.getElementById('adminCode').value;
+            if (adminCode === '9154') {
+                document.querySelector('.container').classList.add('fade-out');
+                document.getElementById('adminLogin').style.display = 'none';
+                document.getElementById('registrationsList').style.display = 'block';
+                document.getElementById('viewRegistrationsBtn').style.display = 'block';
+
+                onValue(registrationsRef, (snapshot) => {
+                    const data = snapshot.val();
+                    const list = document.getElementById('registrationsList');
+                    list.innerHTML = '<h3>Registered Players:</h3>';
+                    for (const key in data) {
+                        const player = data[key];
+                        list.innerHTML += `
+                            <p>Game: ${player.game}<br>
+                            Team: ${player.teamType} ${player.teamName !== 'N/A' ? `(${player.teamName})` : ''}<br>
+                            User: ${player.username}<br>
+                            UID: ${player.uid}</p><hr>
+                        `;
+                    }
+                });
+            } else {
+                alert('Invalid admin code!');
+            }
+        };
+
+        window.toggleRegistrations = () => {
+            document.querySelector('.admin-panel').classList.toggle('active');
+        };
+    </script>
 </body>
 </html>
