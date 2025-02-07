@@ -94,10 +94,6 @@
             font-size: 0.95rem;
         }
 
-        #registerBtn.success {
-            background: #4CAF50 !important;
-        }
-
         #registerBtn:hover {
             background: #0097a7;
         }
@@ -184,6 +180,7 @@
             padding: 10px;
             margin-bottom: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
         }
 
         .fade-out {
@@ -197,6 +194,39 @@
 
         #adminLogin input {
             margin-bottom: 10px;
+        }
+
+        /* New notification styles */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 4px;
+            display: none;
+            animation: fadeInOut 2.5s ease;
+            z-index: 1002;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; bottom: -50px; }
+            15%, 85% { opacity: 1; bottom: 20px; }
+        }
+
+        /* Delete button style */
+        .delete-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            position: absolute;
+            top: 5px;
+            right: 5px;
         }
     </style>
 </head>
@@ -227,7 +257,6 @@
             <div class="form-group instagram-input">
                 <label>Username</label>
                 <input type="text" id="username" required>
-               
             </div>
 
             <div class="form-group" id="teamNameGroup" style="display: none;">
@@ -243,6 +272,8 @@
             <button type="submit" id="registerBtn">Register Now</button>
         </form>
     </div>
+
+    <div class="notification" id="notification">Registration Successful!</div>
 
     <button class="help-btn" onclick="toggleAdminPanel()">?</button>
 
@@ -265,7 +296,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+        import { getDatabase, ref, push, onValue, set, remove } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAfMGdHhkyqWI0YtTFejGd6uI7hM0LKncE",
@@ -300,12 +331,19 @@
 
             try {
                 await push(registrationsRef, registrationData);
-                document.getElementById('registerBtn').classList.add('success');
+                const notif = document.getElementById('notification');
+                notif.style.display = 'block';
+                notif.style.animation = 'none';
+                void notif.offsetWidth; // Trigger reflow
+                notif.style.animation = 'fadeInOut 2.5s ease';
+                
+                document.getElementById('registrationForm').reset();
+                document.getElementById('teamNameGroup').style.display = 'none';
+                
                 setTimeout(() => {
-                    document.getElementById('registerBtn').classList.remove('success');
-                    document.getElementById('registrationForm').reset();
-                    document.getElementById('teamNameGroup').style.display = 'none';
-                }, 2000);
+                    notif.style.display = 'none';
+                }, 2500);
+
             } catch (error) {
                 console.error('Registration error:', error);
                 alert('Registration failed. Please try again.');
@@ -332,6 +370,7 @@
                         Object.entries(data).forEach(([key, player]) => {
                             list.innerHTML += `
                                 <div class="registration-entry">
+                                    <button class="delete-btn" onclick="window.deleteEntry('${key}')">×</button>
                                     <p><strong>Game:</strong> ${player.game}</p>
                                     <p><strong>Team:</strong> ${player.teamType} ${player.teamName !== 'N/A' ? `(${player.teamName})` : ''}</p>
                                     <p><strong>User:</strong> ${player.username}</p>
@@ -345,6 +384,15 @@
                 });
             } else {
                 alert('Invalid admin code!');
+            }
+        };
+
+        window.deleteEntry = (key) => {
+            if (confirm('Are you sure you want to delete this entry?')) {
+                const entryRef = ref(database, `registrations/${key}`);
+                remove(entryRef)
+                    .then(() => console.log('Entry deleted'))
+                    .catch(error => console.error('Delete error:', error));
             }
         };
 
