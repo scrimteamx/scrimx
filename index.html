@@ -239,6 +239,7 @@ body {
 </head>
 <body>
     <div class="container">
+<div class="container">
         <h1>Tournament Registration</h1>
         <form id="registrationForm">
             <div class="form-group">
@@ -247,7 +248,8 @@ body {
                     <option value="">Choose Game</option>
                     <option value="Free Fire">Free Fire</option>
                     <option value="PUBG">PUBG</option>
-                    <option value="MLBB" disabled>MLBB (N/A)</option>
+                    <option value="MLBB">MLBB</option>
+                    <option value="Roblox">Roblox</option>
                 </select>
             </div>
 
@@ -273,7 +275,7 @@ body {
             </div>
 
             <div class="form-group">
-                <label>UID</label>
+                <label for="uid">UID</label>
                 <input type="number" id="uid" required>
             </div>
 
@@ -306,41 +308,73 @@ body {
         </div>
     </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-    import { getDatabase, ref, push, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getDatabase, ref, push, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyAfMGdHhkyqWI0YtTFejGd6uI7hM0LKncE",
-        authDomain: "pubgscrim-d9058.firebaseapp.com",
-        databaseURL: "https://pubgscrim-d9058-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "pubgscrim-d9058",
-        storageBucket: "pubgscrim-d9058.firebasestorage.app",
-        messagingSenderId: "344207896071",
-        appId: "1:344207896071:web:6cc10edac749d6a13144a2"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyAfMGdHhkyqWI0YtTFejGd6uI7hM0LKncE",
+            authDomain: "pubgscrim-d9058.firebaseapp.com",
+            databaseURL: "https://pubgscrim-d9058-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "pubgscrim-d9058",
+            storageBucket: "pubgscrim-d9058.firebasestorage.app",
+            messagingSenderId: "344207896071",
+            appId: "1:344207896071:web:6cc10edac749d6a13144a2"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-    const registrationsRef = ref(database, 'registrations');
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const registrationsRef = ref(database, 'registrations');
 
-    const createRegistrationEntry = (key, player) => {
-        const isPaid = player.paid || false;
-        const btn = isPaid ? 
-            `<button class="payment-btn unpaid-btn" onclick="markAsUnpaid('${key}')">Unpaid</button>` :
-            `<button class="payment-btn paid-btn" onclick="markAsPaid('${key}')">Paid</button>`;
+        const createRegistrationEntry = (key, player) => {
+            const isPaid = player.paid || false;
+            const identifierLabel = player.game === 'Roblox' ? 'Game Name' : 'UID';
+            const btn = isPaid ? 
+                `<button class="payment-btn unpaid-btn" onclick="markAsUnpaid('${key}')">Unpaid</button>` :
+                `<button class="payment-btn paid-btn" onclick="markAsPaid('${key}')">Paid</button>`;
 
-        return `
-            <div class="registration-entry">
-                <p><strong>Game:</strong> ${player.game}</p>
-                <p><strong>Team:</strong> ${player.teamType} ${player.teamName !== 'N/A' ? `(${player.teamName})` : ''}</p>
-                <p><strong>User:</strong> ${player.username}</p>
-                <p><strong>UID:</strong> ${player.uid}</p>
-                ${btn}
-                <button class="delete-btn" onclick="deletePlayer('${key}')">Delete</button>
-            </div>
-        `;
-    };
+            return `
+                <div class="registration-entry">
+                    <p><strong>Game:</strong> ${player.game}</p>
+                    <p><strong>Team:</strong> ${player.teamType} ${player.teamName && player.teamName !== 'N/A' ? `(${player.teamName})` : ''}</p>
+                    <p><strong>User:</strong> ${player.username}</p>
+                    <p><strong>${identifierLabel}:</strong> ${player.uid}</p>
+                    ${btn}
+                    <button class="delete-btn" onclick="deletePlayer('${key}')">Delete</button>
+                </div>
+            `;
+        };
+
+        // Add game select change handler
+        document.getElementById('gameSelect').addEventListener('change', function() {
+            const uidLabel = document.querySelector('label[for="uid"]');
+            const uidInput = document.getElementById('uid');
+            if (this.value === 'Roblox') {
+                uidLabel.textContent = 'Game Name';
+                uidInput.type = 'text';
+                uidInput.removeAttribute('required');
+            } else {
+                uidLabel.textContent = 'UID';
+                uidInput.type = 'number';
+                uidInput.required = true;
+            }
+        });
+
+  // Add game select change handler
+        document.getElementById('gameSelect').addEventListener('change', function() {
+            const uidLabel = document.querySelector('label[for="uid"]');
+            const uidInput = document.getElementById('uid');
+            if (this.value === 'Roblox') {
+                uidLabel.textContent = 'Game Name';
+                uidInput.type = 'text';
+                uidInput.removeAttribute('required');
+            } else {
+                uidLabel.textContent = 'UID';
+                uidInput.type = 'number';
+                uidInput.required = true;
+            }
+        });
+
 
     window.markAsPaid = (key) => {
         const playerRef = ref(database, `registrations/${key}`);
